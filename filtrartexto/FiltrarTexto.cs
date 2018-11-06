@@ -6,10 +6,10 @@ namespace filtrartexto
 {
     class FiltrarTexto
     {
-        private string Switch_on { get; set; }
-        private string Inicio { get; set; }
-        private string Fim { get; set; }
-        private bool JaFoi { get; set; }
+        private string Switch_on;
+        private string Inicio;
+        private string Fim;
+        private bool JaFoi;
         public FiltrarTexto()
         {
             Console.WriteLine("Digite as linhas que contenham X palavra ou texto, para trazer retorno");
