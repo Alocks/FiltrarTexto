@@ -1,10 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 
 namespace filtrartexto
 {
@@ -37,13 +33,24 @@ namespace filtrartexto
                     Console.WriteLine("Nome do Arquivo inválido! Tente novamente.");
                 }
         }
-            List<string> results = new List<string>();
-            Console.WriteLine("Deseja remover alguma informação da string? S/N");
-            string deseja = Console.ReadLine();
+            bool Ainda = false;
+            string deseja = "";
+                List<string> results = new List<string>();
+
+
             foreach (string linha in LinhasTexto)
             {
                 if (linha.Contains(pesquisa))
                 {
+                    if (!Ainda)
+                    {
+                        Console.Clear();
+                        Console.WriteLine("Input do que foi retornado:");
+                        Console.WriteLine(linha);
+                        Console.WriteLine("Deseja remover alguma informação da string? S/N");
+                        deseja = Console.ReadLine();
+                        Ainda = true;
+                    }
                     if (deseja == "S" || deseja == "s")
                     {
                         string ade = RemoverInformacao(linha);
@@ -72,8 +79,10 @@ namespace filtrartexto
             while (Switch_on != "1" && Switch_on != "2" && Switch_on != "3")
             {
                 Console.Clear();
+                Console.WriteLine("Input:");
                 Console.WriteLine(texto);
-                Console.WriteLine(" Escolha as opções");
+                Console.WriteLine("---------------------------------------");
+                Console.WriteLine(" Escolha as opções:");
                 Console.WriteLine("1 - Filtrar texto entre a string");
                 Console.WriteLine("2 - Filtrar texto do fim da string");
                 Console.WriteLine("3 - Filtrar texto do início da string");
