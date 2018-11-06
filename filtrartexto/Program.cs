@@ -7,8 +7,6 @@ namespace filtrartexto
         static void Main(string[] args)
         {
             FiltrarTexto FiltrarTexto = new FiltrarTexto();
-            Console.WriteLine("Aperte qualquer tecla para finalizar o programa...");
-            Console.ReadKey();
         }
     }
 }
