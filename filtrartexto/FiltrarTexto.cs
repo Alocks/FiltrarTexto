@@ -14,6 +14,8 @@ namespace filtrartexto
         {
             Console.WriteLine("Digite as linhas que contenham X palavra ou texto, para trazer retorno");
             FiltrarLinhas(Console.ReadLine());
+            Console.WriteLine("Terminado com sucesso!");
+            Console.ReadKey();
         }
         private void FiltrarLinhas(string pesquisa)            
         {
