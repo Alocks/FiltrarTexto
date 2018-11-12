@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace filtrartexto
+﻿namespace filtrartexto
 {
     class Program
     {

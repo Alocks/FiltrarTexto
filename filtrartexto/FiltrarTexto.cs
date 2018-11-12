@@ -1,157 +1,194 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Threading;
 
 namespace filtrartexto
 {
     class FiltrarTexto
     {
-        private string Switch_on;
+        private string Arquivo;
+        private int opcao;
         private string Inicio;
         private string Fim;
         private bool JaFoi;
         public FiltrarTexto()
         {
-            Console.WriteLine("Digite as linhas que contenham X palavra ou texto, para trazer retorno");
-            FiltrarLinhas(Console.ReadLine());
+            FiltrarLinhas();
             Console.WriteLine("Terminado com sucesso!");
             Console.ReadKey();
         }
-        private void FiltrarLinhas(string pesquisa)            
+        private void FiltrarLinhas()            
         {
-             bool feito = false;
+            bool feito = false;
+            bool Ainda = false;
+            List<string> resultado = new List<string>();
             string[] LinhasTexto = null;
+            string deseja = "";
+            string pesquisa = "";
+
+
         while (!feito)
         {
                 try
                 {
                     Console.WriteLine("Digite o nome do arquivo:");
-                    String Arquivo = Console.ReadLine();
+                    Arquivo = Console.ReadLine();
                     LinhasTexto = File.ReadAllLines(Arquivo);
-                    feito = true;
+                    Console.Clear();
+                    Console.WriteLine("Consultando as primeiras 20 linhas do arquivo\n\n");
+                    for (int i=0; i<20;i++)
+                    {
+                        Console.WriteLine(LinhasTexto[i]);
+                    }
+                    Console.WriteLine("\n\nDigite as linhas que contenham X palavra ou texto, para trazer retorno");
+                    pesquisa = Console.ReadLine();
+                    pesquisa = pesquisa.ToUpper();
+                    if (string.IsNullOrEmpty(pesquisa))
+                        throw new ArgumentException("Favor, digitar algo.");
+                        feito = true;
                 }
-                catch (Exception)
+                catch (IOException e)
                 {
-                    Console.WriteLine("Nome do Arquivo inválido! Tente novamente.");
+                    Console.WriteLine(e.Message);
+                }
+                catch (ArgumentException e)
+                {
+                    Console.WriteLine(e.Message);
                 }
         }
-            bool Ainda = false;
-            string deseja = "";
-                List<string> results = new List<string>();
-
 
             foreach (string linha in LinhasTexto)
             {
-                if (linha.Contains(pesquisa))
+                string linhaCaps = linha.ToUpper();
+                if (linhaCaps.Contains(pesquisa))
                 {
-                    if (!Ainda)
+                    while (!Ainda)
                     {
-                        Console.Clear();
-                        Console.WriteLine("Input do que foi retornado:");
-                        Console.WriteLine(linha);
-                        Console.WriteLine("Deseja remover alguma informação da string? S/N");
-                        deseja = Console.ReadLine();
-                        Ainda = true;
+                        try
+                        {
+                            Console.Clear();
+                            Console.WriteLine("Input do que foi retornado:");
+                            Console.WriteLine(linha);
+                            Console.WriteLine("Deseja remover alguma informação da string? S/N");
+                            deseja = Console.ReadLine();
+                            if (deseja.ToUpper() != "N" && deseja.ToUpper() != "S")
+                                throw new ArgumentException("Opção inválida!");
+                            else Ainda = true;
+                        }
+                        catch(ArgumentException e)
+                        {
+                            Console.WriteLine(e.Message);
+                            Thread.Sleep(1500);
+                        }
                     }
-                    if (deseja == "S" || deseja == "s")
+                    if (deseja.ToUpper() == "S")
                     {
                         string ade = RemoverInformacao(linha);
-                        results.Add(ade);
+                        resultado.Add(ade);
                     }
                     else
                     {
                         Console.WriteLine(linha);
-                        results.Add(linha);
+                        resultado.Add(linha);
                     }
                 }
             }
             TextWriter tw = new StreamWriter("Saida.log");
-
-            foreach (string s in results)
+            foreach (string s in resultado)
             {
                 tw.WriteLine(s);
             }
-
             tw.Close();
         }
+
         private string RemoverInformacao(string texto)
         {
             string resultado = texto;
-            int pFrom, pTo;
-            while (Switch_on != "1" && Switch_on != "2" && Switch_on != "3")
+            int de, para;
+            while (opcao != 1 && opcao != 2 && opcao != 3)
             {
-                Console.Clear();
-                Console.WriteLine("Input:");
-                Console.WriteLine(texto);
-                Console.WriteLine("---------------------------------------");
-                Console.WriteLine(" Escolha as opções:");
-                Console.WriteLine("1 - Filtrar texto entre a string");
-                Console.WriteLine("2 - Filtrar texto do fim da string");
-                Console.WriteLine("3 - Filtrar texto do início da string");
-                Switch_on = Console.ReadLine();
-                Console.Clear();
-                if (Switch_on != "1" && Switch_on != "2" && Switch_on != "3")
+                try
                 {
-                    Console.WriteLine("Caractere inválido!");
+                    Console.Clear();
+                    Console.WriteLine("Input:");
+                    Console.WriteLine(texto);
+                    Console.WriteLine("---------------------------------------");
+                    Console.WriteLine(" Escolha as opções:");
+                    Console.WriteLine("1 - Filtrar texto entre a string");
+                    Console.WriteLine("2 - Filtrar texto do fim da string");
+                    Console.WriteLine("3 - Filtrar texto do início da string");
+                    opcao = int.Parse(Console.ReadLine());
+                    Console.Clear();
                 }
-
+                catch(FormatException e)
+                {
+                    Console.WriteLine(e.Message);
+                    Thread.Sleep(3000);
+                }
             }
-
-            switch (Switch_on)
+            switch (opcao)
             {
-                case "1":
+                case 1:
                     {
                         if (!JaFoi)
                         {
-                            Console.Clear();
-                            Console.WriteLine("Input:");
-                            Console.WriteLine(texto);
-                            Console.WriteLine("Digite de onde a String irá começar");
-                            Inicio = Console.ReadLine();
-                            Console.WriteLine("Digite de onde a String irá acabar");
-                            Fim = Console.ReadLine();
+                            RemoverOpcao(true, true, texto);
                             JaFoi = true;
                         }
-                        pFrom = texto.IndexOf(Inicio) + Inicio.Length;
-                        pTo = texto.LastIndexOf(Fim);
-                        resultado = texto.Substring(pFrom, pTo - pFrom);
-                        Console.WriteLine("Resultado = " + resultado);
+                        de = texto.IndexOf(Inicio) + Inicio.Length;
+                        para = texto.LastIndexOf(Fim);
+                        resultado = texto.Substring(de, para - de);
                         break;
                     }
-                case "2":
+                case 2:
                     {
                         if (!JaFoi)
                         {
-                            Console.Clear();
-                            Console.WriteLine("Input:");
-                            Console.WriteLine(texto);
-                            Console.WriteLine("Digite de onde irá acabar a String");
-                            Fim = Console.ReadLine();
+                            RemoverOpcao(false, true, texto);
                             JaFoi = true;
                         }
-                        pTo = texto.LastIndexOf(Fim);
-                        resultado = texto.Substring(0, pTo);
-                        Console.WriteLine("Resultado = " + resultado);
+                        para = texto.LastIndexOf(Fim);
+                        resultado = texto.Substring(0, para);
                         break;
                     }
-                case "3":
+                case 3:
                     {
                         if (!JaFoi)
                         {
-                            Console.Clear();
-                            Console.WriteLine("Input:");
-                            Console.WriteLine(texto);
-                            Console.WriteLine("Digite de onde o texto irá começar");
-                            Inicio = Console.ReadLine();
+                            RemoverOpcao(true, false, texto);
                             JaFoi = true;
                         }
-                        pFrom = texto.IndexOf(Inicio) + Inicio.Length;
-                        resultado = texto.Substring(pFrom);
-                        Console.WriteLine("Resultado = " + resultado);
+                        de = texto.IndexOf(Inicio) + Inicio.Length;
+                        resultado = texto.Substring(de);
                         break;
                     }
             }
+            Console.WriteLine("Resultado = " + resultado);
             return resultado;
-        }       
+        }  
+
+
+
+        private void RemoverOpcao(bool inicio, bool fim, string texto)
+        {
+            Console.Clear();
+            Console.WriteLine("Input:");
+            Console.WriteLine(texto);
+
+            if (inicio)
+            {
+                Console.WriteLine("Digite de onde a String irá começar (Case Sensitive)");
+                Inicio = Console.ReadLine();
+                
+            }
+            if(fim)
+            {
+                Console.WriteLine("Digite de onde a String irá acabar (Case Sensitive)");
+                Fim = Console.ReadLine();
+            }
+
+
+        }
     }
 }
